@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Paths
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(__file__)
 MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
 HISTORY_FILE = os.path.join(BASE_DIR, 'history.json')
 
