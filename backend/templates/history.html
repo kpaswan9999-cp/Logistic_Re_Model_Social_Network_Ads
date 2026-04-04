@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}SocialFlow | Prediction History{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="glass-card wide-card">
+        <h2 class="page-title">INFERENCE ARCHIVE</h2>
+        <p class="subtitle">Latest Analytics History</p>
+
+        <!-- Demographic Scatter Plot -->
+        <div class="history-chart-wrap anim-slide-up">
+            <div class="chart-header">
+                <p class="chart-tag">DEMOGRAPHIC DISTRIBUTION</p>
+                <h3 class="chart-title">AGE VS SALARY OUTCOMES</h3>
+            </div>
+            <div class="main-chart-container">
+                <canvas id="demographicMapChart"></canvas>
+            </div>
+        </div>
+
+        {% if history %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TIMESTAMP</th>
+                        <th>AGE</th>
+                        <th>SALARY</th>
+                        <th>PREDICTION</th>
+                        <th>CONFIDENCE</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history | reverse %}
+                    <tr>
+                        <td>{{ item.timestamp }}</td>
+                        <td>{{ item.age | int }}</td>
+                        <td>₹{{ "{:,.0f}".format(item.salary) }}</td>
+                        <td>
+                            <span class="badge {% if item.prediction == 1 %}purchased{% else %}not-purchased{% endif %}">
+                                {{ item.status | upper }}
+                            </span>
+                        </td>
+                        <td class="confidence-cell">{{ item.probability }}%</td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ url_for('view_entry', entry_id=item.id) }}" class="action-btn view" title="View Full Report">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </a>
+                                <form action="{{ url_for('delete_history_entry', entry_id=item.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Erase this record from neural archives?');">
+                                    <button type="submit" class="action-btn delete" title="Erase Record">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No historical data available. Start an analysis to begin archiving.</p>
+            <a href="{{ url_for('analyze') }}" class="btn-solid">ANALYZE NOW</a>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        const historyData = {{ history | tojson }};
+        if (historyData.length > 0) {
+            const ctx = document.getElementById('demographicMapChart').getContext('2d');
+            
+            const purchasedData = historyData.filter(d => d.prediction === 1).map(d => ({ x: d.age, y: d.salary }));
+            const notPurchasedData = historyData.filter(d => d.prediction === 0).map(d => ({ x: d.age, y: d.salary }));
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Purchased Context',
+                            data: purchasedData,
+                            backgroundColor: 'rgba(56, 189, 248, 0.8)', // Primary Cyans
+                            borderColor: '#38BDF8',
+                            borderWidth: 1,
+                            radius: 6,
+                            hoverRadius: 8
+                        },
+                        {
+                            label: 'Non-Purchased Context',
+                            data: notPurchasedData,
+                            backgroundColor: 'rgba(244, 63, 94, 0.8)', // Rose/Red
+                            borderColor: '#F43F5E',
+                            borderWidth: 1,
+                            radius: 6,
+                            hoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { 
+                            position: 'top',
+                            labels: { color: '#E2E8F0', font: { family: 'Inter', size: 12 }, usePointStyle: true }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#38BDF8',
+                            borderColor: 'rgba(56, 189, 248, 0.2)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Age: ${context.raw.x} | Salary: ₹${context.raw.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            title: { display: true, text: 'Estimated Salary (₹)', color: '#94A3B8' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8' }
+                        },
+                        x: { 
+                            title: { display: true, text: 'Age (Years)', color: '#94A3B8' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</section>
+{% endblock %}

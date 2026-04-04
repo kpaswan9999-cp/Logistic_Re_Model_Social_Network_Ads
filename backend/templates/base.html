@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SocialFlow | Neural Engine{% endblock %}</title>
+    <!-- Style Import -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Background System -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="hud-overlay"></div>
+    <div class="grid-background"></div>
+
+    <!-- Master Navigation -->
+    <header>
+        <div class="logo">SOCIALFLOW</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="{% if request.path == url_for('home') %}active{% endif %}">HOME</a></li>
+                <li><a href="{{ url_for('analyze') }}" class="{% if request.path == url_for('analyze') %}active{% endif %}">ANALYZE</a></li>
+                <li><a href="{{ url_for('history_page') }}" class="{% if request.path == url_for('history_page') %}active{% endif %}">HISTORY</a></li>
+                <li><a href="{{ url_for('about') }}" class="{% if request.path == url_for('about') %}active{% endif %}">ABOUT</a></li>
+            </ul>
+        </nav>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>SYSTEM LIVE</span>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Logic System -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

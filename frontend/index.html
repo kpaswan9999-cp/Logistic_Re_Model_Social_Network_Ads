@@ -3,41 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ConvergeAI | Predictive Social Network Intelligence</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="description" content="ConvergeAI uses advanced machine learning to predict social network consumer behavior with over 83% accuracy.">
+    <title>SocialFlow | Home</title>
+    <!-- Style Import -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <div class="particles"></div>
-    <div class="floating-orb orb-1"></div>
-    <div class="floating-orb orb-2"></div>
+    <!-- Background System -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="hud-overlay"></div>
+    <div class="grid-background"></div>
 
-    <nav>
-        <div class="logo">CONVERGE<span style="color: var(--accent-magenta)">.AI</span></div>
-        <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="predict.html">Analyze</a>
-            <a href="#">Technology</a>
-        </div>
+    <!-- Master Navigation -->
+    <header>
+        <div class="logo">SOCIALFLOW</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">HOME</a></li>
+                <li><a href="analyze.html" class="">ANALYZE</a></li>
+                <li><a href="history.html" class="">HISTORY</a></li>
+                <li><a href="about.html" class="">ABOUT</a></li>
+            </ul>
+        </nav>
         <div class="status-badge">
-            <div class="status-dot"></div>
-            SYSTEM OPERATIONAL
+            <div class="pulse-dot"></div>
+            <span>SYSTEM LIVE</span>
         </div>
-    </nav>
+    </header>
 
-    <section class="hero">
-        <h3>SOCIAL AD ANALYSIS v1.02</h3>
-        <h1>PREDICTIVE CONSUMER<br><span style="color: var(--accent-blue)">CONVERSION</span> ENGINE</h1>
-        <p>Uncover the hidden patterns of social commerce. Our specialized Logistic Regression engine analyzes demographic vectors to forecast purchase intent with surgical precision.</p>
-        <div class="cta-group">
-            <a href="predict.html" class="btn btn-primary">Start Analysis</a>
-            <a href="#" class="btn btn-glass">View Methodology</a>
-        </div>
-    </section>
+    <!-- Page Content -->
+    <main>
+        <section class="home-hero">
+            <div class="hero-content">
+                <h1>PREDICT SOCIAL<br><span class="accent">ENGAGEMENT</span></h1>
+                <p class="description">Analyze user demographics to forecast purchase behavior with 84% validated accuracy.</p>
+                <a href="analyze.html" class="cta-btn">START ANALYZER</a>
+            </div>
+        </section>
 
-    <footer style="position: absolute; bottom: 2rem; width: 100%; text-align: center; color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 2px;">
-        © 2026 CONVERGE ANALYTICS CORE. ALL RIGHTS RESERVED.
-    </footer>
+        <section class="workflow-section">
+            <div class="workflow-header">
+                <p class="workflow-eyebrow">NEURAL PIPELINE</p>
+                <h2 class="section-title">THE NEURAL WORKFLOW</h2>
+                <p class="workflow-subtitle">A four-stage data processing engine built on statistical inference</p>
+            </div>
+
+            <!-- Horizontal Pipeline -->
+            <div class="pipeline-container">
+                <div class="pipeline-step" data-step="0">
+                    <div class="step-connector left-connector"></div>
+                    <div class="step-icon-wrap">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                        </div>
+                        <div class="step-pulse-ring"></div>
+                    </div>
+                    <div class="step-num-tag">01</div>
+                    <h3 class="step-title">DATA INGESTION</h3>
+                    <p class="step-desc">Cleaning and preprocessing raw Social Network Ads datasets. Handling null values via median imputation and normalizing feature ranges.</p>
+                    <div class="step-tech-tag">Pandas · CSV Pipeline</div>
+                    <div class="step-connector right-connector"></div>
+                </div>
+
+                <div class="pipeline-step" data-step="1">
+                    <div class="step-connector left-connector"></div>
+                    <div class="step-icon-wrap">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></svg>
+                        </div>
+                        <div class="step-pulse-ring"></div>
+                    </div>
+                    <div class="step-num-tag">02</div>
+                    <h3 class="step-title">FEATURE SCALING</h3>
+                    <p class="step-desc">Applying StandardScaler to normalize Age &amp; Salary. Ensures balanced computational weight across independent variables.</p>
+                    <div class="step-tech-tag">StandardScaler · Scikit-Learn</div>
+                    <div class="step-connector right-connector"></div>
+                </div>
+
+                <div class="pipeline-step" data-step="2">
+                    <div class="step-connector left-connector"></div>
+                    <div class="step-icon-wrap">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 8A2.5 2.5 0 0 1 17 10.5v9a2.5 2.5 0 0 1-5 0v-9A2.5 2.5 0 0 1 14.5 8z"/></svg>
+                        </div>
+                        <div class="step-pulse-ring"></div>
+                    </div>
+                    <div class="step-num-tag">03</div>
+                    <h3 class="step-title">LOGISTIC INFERENCE</h3>
+                    <p class="step-desc">Logistic Regression computes a binary probability, crossing the 0.5 sigmoid decision boundary to classify &ldquo;Purchased&rdquo; status.</p>
+                    <div class="step-tech-tag">LogisticRegression · sigmoid()</div>
+                    <div class="step-connector right-connector"></div>
+                </div>
+
+                <div class="pipeline-step" data-step="3">
+                    <div class="step-connector left-connector"></div>
+                    <div class="step-icon-wrap">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        </div>
+                        <div class="step-pulse-ring"></div>
+                    </div>
+                    <div class="step-num-tag">04</div>
+                    <h3 class="step-title">RESULT VISUALIZATION</h3>
+                    <p class="step-desc">Rendering high-fidelity results: confidence coefficients, demographic summaries, and persistent archiving to the Inference History.</p>
+                    <div class="step-tech-tag">SocialFlow · REST API</div>
+                </div>
+            </div>
+
+            <!-- Animated Progress Bar -->
+            <div class="pipeline-progress-track">
+                <div class="pipeline-progress-fill" id="pipelineProgress"></div>
+                <div class="pipeline-progress-label">PIPELINE READY</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Logic System -->
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

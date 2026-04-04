@@ -1,7 +1,0 @@
-flask
-flask-cors
-gunicorn
-pandas
-numpy
-scikit-learn
-pickle5; python_version < "3.8"

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}SocialFlow | Inference Result{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="glass-card result-card anim-slide-up">
+        <h2 class="page-title glitch" data-text="INFERENCE COMPLETE">INFERENCE COMPLETE</h2>
+        
+        <div class="dashboard-grid">
+            <!-- Left: Neural Status -->
+            <div class="dash-section status-section anim-pop" data-delay="1">
+                <p class="status-eyebrow">PREDICTED SOCIAL BEHAVIOR</p>
+                <h1 class="result-status {% if result.prediction == 1 %}purchased{% else %}not-purchased{% endif %}">
+                    {{ result.status | upper }}
+                </h1>
+                <div class="status-indicator-bar">
+                    <div class="indicator-fill {% if result.prediction == 1 %}success{% else %}danger{% endif %}"></div>
+                </div>
+            </div>
+
+            <!-- Middle: Neural Confidence Chart -->
+            <div class="dash-section chart-section anim-pop" data-delay="2">
+                <div class="chart-container-sm">
+                    <canvas id="confidenceChart"></canvas>
+                    <div class="chart-label-overlay">
+                        <span class="conf-val" id="countVal" data-target="{{ result.probability }}">0</span>
+                        <span class="conf-unit">%</span>
+                    </div>
+                </div>
+                <p class="chart-sublabel">NEURAL PROBABILITY</p>
+            </div>
+
+            <!-- Right: Demographic Data Pods -->
+            <div class="dash-section data-pods anim-pop" data-delay="3">
+                <div class="data-pod">
+                    <span class="pod-label">TARGET AGE</span>
+                    <span class="pod-value">{{ result.age | int }} <small>YRS</small></span>
+                </div>
+                <div class="data-pod">
+                    <span class="pod-label">EST. SALARY</span>
+                    <span class="pod-value">₹{{ "{:,.0f}".format(result.salary) }}</span>
+                </div>
+                <div class="data-pod">
+                    <span class="pod-label">TIMESTAMP</span>
+                    <span class="pod-value time-val">{{ result.timestamp or 'SYNCED' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row anim-slide-up" data-delay="4">
+            <a href="{{ url_for('analyze') }}" class="cta-btn secondary">NEW ANALYSIS</a>
+            <a href="{{ url_for('history_page') }}" class="cta-btn">VIEW ARCHIVE</a>
+        </div>
+    </div>
+
+    <script>
+        // --- Radial Gauge Setup ---
+        const ctx = document.getElementById('confidenceChart').getContext('2d');
+        const prob = {{ result.probability }};
+        const color = prob > 50 ? '#4ade80' : '#f87171';
+        const glow = prob > 50 ? 'rgba(74, 222, 128, 0.4)' : 'rgba(248, 113, 113, 0.4)';
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [prob, 100 - prob],
+                    backgroundColor: [color, 'rgba(255,255,255,0.03)'],
+                    borderWidth: 0,
+                    circumference: 270,
+                    rotation: 225,
+                    cutout: '85%',
+                    borderRadius: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { tooltip: { enabled: false } },
+                animation: { duration: 2000, easing: 'easeOutQuart' }
+            }
+        });
+
+        // --- Counter Animation ---
+        const countEl = document.getElementById('countVal');
+        const target = parseFloat(countEl.dataset.target);
+        let start = 0;
+        const duration = 2000;
+        const step = target / (duration / 16);
+        
+        function animateCounter() {
+            start = Math.min(start + step, target);
+            countEl.textContent = start.toFixed(1);
+            if (start < target) requestAnimationFrame(animateCounter);
+        }
+        setTimeout(animateCounter, 300);
+    </script>
+</section>
+{% endblock %}

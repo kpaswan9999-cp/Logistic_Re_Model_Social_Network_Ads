@@ -1,52 +1,43 @@
 import pandas as pd
-import numpy as np
 import pickle
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.pipeline import Pipeline
 
-def improve_train():
-    try:
-        df = pd.read_csv('Social_Network_Ads.csv')
-        df['Age'] = df['Age'].fillna(df['Age'].median())
-        df['EstimatedSalary'] = df['EstimatedSalary'].fillna(df['EstimatedSalary'].median())
-        
-        X = df[['Age', 'EstimatedSalary']]
-        y = df['Purchased']
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-        sc = StandardScaler()
-        X_train_scaled = sc.fit_transform(X_train)
-        X_test_scaled = sc.transform(X_test)
-        
-        # Hyperparameter Tuning
-        param_grid = {'C': [0.01, 0.1, 1, 10, 100], 'solver': ['liblinear', 'lbfgs']}
-        grid = GridSearchCV(LogisticRegression(random_state=42), param_grid, cv=5, scoring='accuracy')
-        grid.fit(X_train_scaled, y_train)
-        
-        best_model = grid.best_estimator_
-        y_pred = best_model.predict(X_test_scaled)
-        
-        print(f"Best Accuracy: {accuracy_score(y_test, y_pred):.4f}")
-        print(f"Best Params: {grid.best_params_}")
-        
-        with open('model.pkl', 'wb') as f:
-            pickle.dump(best_model, f)
-        with open('scaler.pkl', 'wb') as f:
-            pickle.dump(sc, f)
-        
-        # Also copy to backend folder
-        with open('backend/model.pkl', 'wb') as f:
-            pickle.dump(best_model, f)
-        with open('backend/scaler.pkl', 'wb') as f:
-            pickle.dump(sc, f)
-            
-        print("Improved Model and Scaler saved.")
-        
-    except Exception as e:
-        print(f"Error: {e}")
+# Load the dataset
+data_path = 'Social_Network_Ads.csv'
+df = pd.read_csv(data_path)
 
-if __name__ == "__main__":
-    improve_train()
+# Drop rows where target 'Purchased' is missing, then fix features
+# (Usually 'Purchased' is fully there, but let's be safe)
+df = df.dropna(subset=['Purchased'])
+
+# Fill missing values for features with median
+# We use .fillna() and assign back to avoid "inplace" behavior issues in some versions
+df['Age'] = df['Age'].fillna(df['Age'].median())
+df['EstimatedSalary'] = df['EstimatedSalary'].fillna(df['EstimatedSalary'].median())
+
+# Features and target
+X = df[['Age', 'EstimatedSalary']]
+y = df['Purchased']
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a pipeline with scaling and model
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),
+    ('model', LogisticRegression())
+])
+
+# Train the model
+pipeline.fit(X_train, y_train)
+
+# Save the pipeline
+with open('model.pkl', 'wb') as f:
+    pickle.dump(pipeline, f)
+
+print("Model trained and saved as model.pkl (including scaler)")
+print(f"Final training accuracy: {pipeline.score(X_train, y_train):.4f}")
+print(f"Final testing accuracy: {pipeline.score(X_test, y_test):.4f}")

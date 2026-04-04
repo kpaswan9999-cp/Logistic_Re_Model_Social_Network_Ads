@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialFlow | Inference Result</title>
+    <!-- Style Import -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Background System -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="hud-overlay"></div>
+    <div class="grid-background"></div>
+
+    <!-- Master Navigation -->
+    <header>
+        <div class="logo">SOCIALFLOW</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="">HOME</a></li>
+                <li><a href="analyze.html" class="">ANALYZE</a></li>
+                <li><a href="history.html" class="">HISTORY</a></li>
+                <li><a href="about.html" class="">ABOUT</a></li>
+            </ul>
+        </nav>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>SYSTEM LIVE</span>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>
+        <section class="page-container">
+            <div class="glass-card result-card anim-slide-up">
+                <h2 class="page-title glitch" data-text="INFERENCE COMPLETE">INFERENCE COMPLETE</h2>
+                
+                <div class="dashboard-grid" id="resultGrid" style="display:none;">
+                    <!-- Left: Neural Status -->
+                    <div class="dash-section status-section anim-pop" data-delay="1">
+                        <p class="status-eyebrow">PREDICTED SOCIAL BEHAVIOR</p>
+                        <h1 class="result-status" id="resStatusTxt"></h1>
+                        <div class="status-indicator-bar">
+                            <div class="indicator-fill" id="resStatusIndicator"></div>
+                        </div>
+                    </div>
+
+                    <!-- Middle: Neural Confidence Chart -->
+                    <div class="dash-section chart-section anim-pop" data-delay="2">
+                        <div class="chart-container-sm">
+                            <canvas id="confidenceChart"></canvas>
+                            <div class="chart-label-overlay">
+                                <span class="conf-val" id="countVal" data-target="0">0</span>
+                                <span class="conf-unit">%</span>
+                            </div>
+                        </div>
+                        <p class="chart-sublabel">NEURAL PROBABILITY</p>
+                    </div>
+
+                    <!-- Right: Demographic Data Pods -->
+                    <div class="dash-section data-pods anim-pop" data-delay="3">
+                        <div class="data-pod">
+                            <span class="pod-label">TARGET AGE</span>
+                            <span class="pod-value"><span id="resAge"></span> <small>YRS</small></span>
+                        </div>
+                        <div class="data-pod">
+                            <span class="pod-label">EST. SALARY</span>
+                            <span class="pod-value" id="resSalary"></span>
+                        </div>
+                        <div class="data-pod">
+                            <span class="pod-label">TIMESTAMP</span>
+                            <span class="pod-value time-val" id="resTime">SYNCED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="noDataError" style="display:none; text-align:center; padding: 40px 0;">
+                    <h3>No inference data provided.</h3>
+                </div>
+
+                <div class="action-row anim-slide-up" data-delay="4">
+                    <a href="analyze.html" class="cta-btn secondary">NEW ANALYSIS</a>
+                    <a href="history.html" class="cta-btn">VIEW ARCHIVE</a>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const params = new URLSearchParams(window.location.search);
+                    if (!params.has('prediction') || !params.has('prob')) {
+                        document.getElementById('noDataError').style.display = 'block';
+                        return;
+                    }
+
+                    document.getElementById('resultGrid').style.display = 'grid';
+
+                    const prediction = parseInt(params.get('prediction'));
+                    const prob = parseFloat(params.get('prob'));
+                    const age = params.get('age') || '--';
+                    const salary = params.get('salary') ? parseFloat(params.get('salary')).toLocaleString() : '--';
+                    const time = params.get('time') || 'SYNCED';
+
+                    // Update DOM
+                    const statusTxt = document.getElementById('resStatusTxt');
+                    const statusIndicator = document.getElementById('resStatusIndicator');
+                    
+                    if (prediction === 1) {
+                        statusTxt.textContent = "PURCHASED";
+                        statusTxt.classList.add("purchased");
+                        statusIndicator.classList.add("success");
+                    } else {
+                        statusTxt.textContent = "NOT PURCHASED";
+                        statusTxt.classList.add("not-purchased");
+                        statusIndicator.classList.add("danger");
+                    }
+
+                    document.getElementById('resAge').textContent = age;
+                    document.getElementById('resSalary').textContent = `₹${salary}`;
+                    document.getElementById('resTime').textContent = time;
+
+                    // --- Radial Gauge Setup ---
+                    const ctx = document.getElementById('confidenceChart').getContext('2d');
+                    const color = prob > 50 ? '#38BDF8' : '#F43F5E';
+
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [prob, 100 - prob],
+                                backgroundColor: [color, 'rgba(255,255,255,0.03)'],
+                                borderWidth: 0,
+                                circumference: 270,
+                                rotation: 225,
+                                cutout: '85%',
+                                borderRadius: 20
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { tooltip: { enabled: false } },
+                            animation: { duration: 2000, easing: 'easeOutQuart' }
+                        }
+                    });
+
+                    // --- Counter Animation ---
+                    const countEl = document.getElementById('countVal');
+                    countEl.dataset.target = prob;
+                    const target = prob;
+                    let start = 0;
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    
+                    function animateCounter() {
+                        start = Math.min(start + step, target);
+                        countEl.textContent = start.toFixed(1);
+                        if (start < target) requestAnimationFrame(animateCounter);
+                    }
+                    setTimeout(animateCounter, 300);
+                });
+            </script>
+        </section>
+    </main>
+
+    <!-- Logic System -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

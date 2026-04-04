@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}SocialFlow | About{% endblock %}
+
+{% block content %}
+<section class="about-hero page-container-wide">
+    <div class="about-hero-inner anim-slide-up">
+        <p class="hero-eyebrow">INTELLIGENCE OVERVIEW</p>
+        <h1 class="about-title">ABOUT <span class="gradient-text">SOCIALFLOW</span></h1>
+        <p class="about-tagline">Next-generation ad behavior prediction powered by statistical inference.</p>
+    </div>
+</section>
+
+<!-- Animated Stat Counters -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card anim-slide-up" data-delay="0">
+            <div class="stat-number" data-target="84" data-suffix="%">0%</div>
+            <div class="stat-label">Model Accuracy</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:84%"></div></div>
+        </div>
+        <div class="stat-card anim-slide-up" data-delay="1">
+            <div class="stat-number" data-target="400" data-suffix="">0</div>
+            <div class="stat-label">Training Samples</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card anim-slide-up" data-delay="2">
+            <div class="stat-number" data-target="2" data-suffix="">0</div>
+            <div class="stat-label">Input Features</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card anim-slide-up" data-delay="3">
+            <div class="stat-number" data-target="100" data-suffix="%">0%</div>
+            <div class="stat-label">Binary Classification</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- About Content Card -->
+<section class="page-container">
+    <div class="glass-card about-card anim-slide-up">
+        <div class="about-section">
+            <p class="about-body">
+                <strong>SocialFlow</strong> is a high-performance machine learning inference dashboard that 
+                predicts consumer purchase behavior from social network advertisement data. By leveraging 
+                statistical modeling, we deliver actionable conversion probability scores to businesses.
+            </p>
+        </div>
+
+        <div class="about-section">
+            <h3 class="about-section-title"><span class="accent-dot"></span>TECH STACK</h3>
+            <div class="tech-badges-grid">
+                <span class="tech-badge anim-pop" data-delay="0">Python 3</span>
+                <span class="tech-badge anim-pop" data-delay="1">Flask</span>
+                <span class="tech-badge anim-pop" data-delay="2">Scikit-Learn</span>
+                <span class="tech-badge anim-pop" data-delay="3">Pandas</span>
+                <span class="tech-badge anim-pop" data-delay="4">Vanilla CSS3</span>
+                <span class="tech-badge anim-pop" data-delay="5">Canvas API</span>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h3 class="about-section-title"><span class="accent-dot"></span>CORE LOGIC</h3>
+            <ul class="logic-list">
+                <li class="logic-item anim-slide-right" data-delay="0">
+                    <div class="logic-icon">σ</div>
+                    <div>
+                        <strong>Logistic Regression:</strong> Binary classifier using sigmoid activation to
+                        map inputs to a purchase probability between 0 and 1.
+                    </div>
+                </li>
+                <li class="logic-item anim-slide-right" data-delay="1">
+                    <div class="logic-icon">∑</div>
+                    <div>
+                        <strong>Standard Scaling:</strong> Feature normalization ensures equal weight
+                        between Age (18–60) and Salary (₹50K–₹1Cr) in the model.
+                    </div>
+                </li>
+                <li class="logic-item anim-slide-right" data-delay="2">
+                    <div class="logic-icon">⊘</div>
+                    <div>
+                        <strong>Median Imputation:</strong> Null values in the dataset are replaced with
+                        column medians to prevent statistical drift during training.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

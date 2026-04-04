@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialFlow | Prediction History</title>
+    <!-- Style Import -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Background System -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="hud-overlay"></div>
+    <div class="grid-background"></div>
+
+    <!-- Master Navigation -->
+    <header>
+        <div class="logo">SOCIALFLOW</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="">HOME</a></li>
+                <li><a href="analyze.html" class="">ANALYZE</a></li>
+                <li><a href="history.html" class="active">HISTORY</a></li>
+                <li><a href="about.html" class="">ABOUT</a></li>
+            </ul>
+        </nav>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>SYSTEM LIVE</span>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>
+        <section class="page-container">
+            <div class="glass-card wide-card">
+                <h2 class="page-title">INFERENCE ARCHIVE</h2>
+                <p class="subtitle">Latest Analytics History</p>
+
+                <!-- Demographic Scatter Plot -->
+                <div class="history-chart-wrap anim-slide-up" style="display:none;" id="chartWrap">
+                    <div class="chart-header">
+                        <p class="chart-tag">DEMOGRAPHIC DISTRIBUTION</p>
+                        <h3 class="chart-title">AGE VS SALARY OUTCOMES</h3>
+                    </div>
+                    <div class="main-chart-container">
+                        <canvas id="demographicMapChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-container" id="tableContainer" style="display:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>TIMESTAMP</th>
+                                <th>AGE</th>
+                                <th>SALARY</th>
+                                <th>PREDICTION</th>
+                                <th>CONFIDENCE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display:none;">
+                    <p>No historical data available. Start an analysis to begin archiving.</p>
+                    <a href="analyze.html" class="btn-solid">ANALYZE NOW</a>
+                </div>
+                
+                <div id="loader" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Fetching Neural Archives...</p>
+                </div>
+            </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const loader = document.getElementById('loader');
+                    const emptyState = document.getElementById('emptyState');
+                    const tableContainer = document.getElementById('tableContainer');
+                    const chartWrap = document.getElementById('chartWrap');
+                    const tbody = document.getElementById('historyTableBody');
+                    
+                    loader.classList.remove('hidden');
+
+                    try {
+                        const apiUrl = window.API_BASE_URL || 'http://127.0.0.1:5000';
+                        const response = await fetch(`${apiUrl}/api/history`);
+                        const historyData = await response.json();
+                        
+                        loader.classList.add('hidden');
+
+                        if (historyData.length === 0) {
+                            emptyState.style.display = 'block';
+                            return;
+                        }
+
+                        tableContainer.style.display = 'block';
+                        chartWrap.style.display = 'block';
+
+                        // Render Table
+                        // Render in reverse to show newest first
+                        [...historyData].reverse().forEach(item => {
+                            const tr = document.createElement('tr');
+                            const statusCls = item.prediction === 1 ? 'purchased' : 'not-purchased';
+                            const formattedSalary = parseFloat(item.salary).toLocaleString('en-IN');
+                            
+                            tr.innerHTML = `
+                                <td>${item.timestamp}</td>
+                                <td>${item.age}</td>
+                                <td>₹${formattedSalary}</td>
+                                <td><span class="badge ${statusCls}">${item.status.toUpperCase()}</span></td>
+                                <td class="confidence-cell">${item.probability}%</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="result.html?prediction=${item.prediction}&prob=${item.probability}&age=${item.age}&salary=${item.salary}&time=${encodeURIComponent(item.timestamp)}" class="action-btn view" title="View Full Report">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        </a>
+                                        <button class="action-btn delete" onclick="deleteEntry('${item.id}')" title="Erase Record">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+
+                        // Render Chart
+                        const ctx = document.getElementById('demographicMapChart').getContext('2d');
+                        const purchasedData = historyData.filter(d => d.prediction === 1).map(d => ({ x: d.age, y: d.salary }));
+                        const notPurchasedData = historyData.filter(d => d.prediction === 0).map(d => ({ x: d.age, y: d.salary }));
+
+                        new Chart(ctx, {
+                            type: 'scatter',
+                            data: {
+                                datasets: [
+                                    {
+                                        label: 'Purchased',
+                                        data: purchasedData,
+                                        backgroundColor: 'rgba(56, 189, 248, 0.8)',
+                                        borderColor: '#38BDF8', borderWidth: 1, radius: 6, hoverRadius: 8
+                                    },
+                                    {
+                                        label: 'Non-Purchased',
+                                        data: notPurchasedData,
+                                        backgroundColor: 'rgba(244, 63, 94, 0.8)',
+                                        borderColor: '#F43F5E', borderWidth: 1, radius: 6, hoverRadius: 8
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { 
+                                    legend: { position: 'top', labels: { color: '#E2E8F0', font: { family: 'Inter', size: 12 }, usePointStyle: true } },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#38BDF8', borderColor: 'rgba(56, 189, 248, 0.2)', borderWidth: 1,
+                                        callbacks: { label: function(context) { return `Age: ${context.raw.x} | Salary: ₹${context.raw.y.toLocaleString()}`; } }
+                                    }
+                                },
+                                scales: {
+                                    y: { title: { display: true, text: 'Estimated Salary (₹)', color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } },
+                                    x: { title: { display: true, text: 'Age (Years)', color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } }
+                                }
+                            }
+                        });
+
+                    } catch (err) {
+                        console.error('Failed to load history:', err);
+                        loader.classList.add('hidden');
+                        emptyState.innerHTML = '<p>Connection to Neural Core failed. Please ensure the backend is running.</p>';
+                        emptyState.style.display = 'block';
+                    }
+                });
+
+                // Global delete function
+                window.deleteEntry = async function(id) {
+                    if(!confirm('Erase this record from neural archives?')) return;
+                    
+                    const apiUrl = window.API_BASE_URL || 'http://127.0.0.1:5000';
+                    try {
+                        const res = await fetch(`${apiUrl}/api/history/${id}`, { method: 'DELETE' });
+                        if(res.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Failed to delete record');
+                        }
+                    } catch(e) {
+                        alert('Network Error');
+                    }
+                }
+            </script>
+        </section>
+    </main>
+
+    <!-- Logic System -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

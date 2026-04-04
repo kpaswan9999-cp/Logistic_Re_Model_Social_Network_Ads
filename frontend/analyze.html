@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialFlow | Analyzer</title>
+    <!-- Style Import -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Background System -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="hud-overlay"></div>
+    <div class="grid-background"></div>
+
+    <!-- Master Navigation -->
+    <header>
+        <div class="logo">SOCIALFLOW</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="">HOME</a></li>
+                <li><a href="analyze.html" class="active">ANALYZE</a></li>
+                <li><a href="history.html" class="">HISTORY</a></li>
+                <li><a href="about.html" class="">ABOUT</a></li>
+            </ul>
+        </nav>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>SYSTEM LIVE</span>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main>
+        <section class="page-container">
+            <div class="glass-card analyzer-card">
+                <h2 class="page-title">INFERENCE INPUT</h2>
+                <p class="subtitle">Enter User Demographics for Neural Analysis</p>
+
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="age">Target User Age</label>
+                        <div class="input-container">
+                            <input type="number" id="age" name="age" step="1" min="18" max="60" value="30" required>
+                            <span class="unit">YEARS</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salary">Estimated Annual Salary</label>
+                        <div class="input-container">
+                            <input type="number" id="salary" name="salary" step="10000" min="50000" max="10000000" value="1200000" required>
+                            <span class="unit">INR (₹)</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="predict-btn" id="submitBtn">
+                        EXECUTE NEURAL INFERENCE
+                    </button>
+                </form>
+
+                <div id="loader" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Scanning Neural Patterns...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Logic System -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
