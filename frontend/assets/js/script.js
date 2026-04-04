@@ -408,7 +408,7 @@ function initForm() {
             }
         } catch (err) {
             console.error('Fetch error:', err);
-            alert('Failed to connect to Neural API.');
+            alert('Failed to connect to API.');
             submitBtn.style.display = 'block';
             if (loader) loader.classList.add('hidden');
         }

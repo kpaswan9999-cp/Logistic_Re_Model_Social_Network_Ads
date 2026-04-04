@@ -176,14 +176,14 @@
                     } catch (err) {
                         console.error('Failed to load history:', err);
                         loader.classList.add('hidden');
-                        emptyState.innerHTML = '<p>Connection to Neural Core failed. Please ensure the backend is running.</p>';
+                        emptyState.innerHTML = '<p>Connection to Inference Core failed. Please ensure the backend is running.</p>';
                         emptyState.style.display = 'block';
                     }
                 });
 
                 // Global delete function
                 window.deleteEntry = async function(id) {
-                    if(!confirm('Erase this record from neural archives?')) return;
+                    if(!confirm('Erase this record from inference archives?')) return;
                     
                     const apiUrl = window.API_BASE_URL || 'http://127.0.0.1:5000';
                     try {
