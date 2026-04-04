@@ -1,6 +1,6 @@
-# Live Link:https://logistic-re-model-social-network-bi22dusm6.vercel.app
+# SocialFlow - Neural Engagement Predictor
 
-# SocialFlow
+# Live Link: https://logistic-re-model-social-network-ad.vercel.app
 
 SocialFlow is an advanced, high-performance web application designed to predict consumer purchase behavior based on demographic data (Age and Estimated Salary) from Social Network Advertisements. 
 
