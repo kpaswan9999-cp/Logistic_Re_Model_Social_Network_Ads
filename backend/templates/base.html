@@ -24,7 +24,7 @@
         <nav>
             <ul class="nav-links">
                 <li><a href="{{ url_for('home') }}" class="{% if request.path == url_for('home') %}active{% endif %}">HOME</a></li>
-                <li><a href="{{ url_for('analyze') }}" class="{% if request.path == url_for('analyze') %}active{% endif %}">ANALYZE</a></li>
+                <li><a href="{{ url_for('analyze') }}" class="{% if request.path == url_for('analyze') %}active{% endif %}">PREDICTION</a></li>
                 <li><a href="{{ url_for('history_page') }}" class="{% if request.path == url_for('history_page') %}active{% endif %}">HISTORY</a></li>
                 <li><a href="{{ url_for('about') }}" class="{% if request.path == url_for('about') %}active{% endif %}">ABOUT</a></li>
             </ul>
